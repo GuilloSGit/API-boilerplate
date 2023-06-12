@@ -12,7 +12,7 @@ router.get("/", (req, res, next) => {
         res.status(200).json(docs);
       } else {
         res.status(200).json({
-          message: "There is no products in the database",
+          message: "There are no products in database",
         });
       }
     })
@@ -65,29 +65,30 @@ router.get("/:productId", (req, res, next) => {
 });
 
 router.patch("/:productId", (req, res, next) => {
-    const id = req.params.productId;
-    const updateOps = {};
-    
-    // Check if req.body is iterable
-    if (Array.isArray(req.body)) {
-      for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-      }
-    } else {
-      updateOps[req.body.propName] = req.body.value;
+  const id = req.params.productId;
+  const updateOps = {};
+
+  // Check if req.body is iterable
+  if (Array.isArray(req.body)) {
+    for (const ops of req.body) {
+      updateOps.$set = updateOps.$set || {};
+      updateOps.$set[ops.propName] = ops.value;
     }
-    
-    Product.updateOne({ _id: id }, { $set: updateOps })
-      .exec()
-      .then((result) => {
-        console.log(result);
-        res.status(200).json(result);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json({ error: err });
-      });
-  });
+  } else {
+    updateOps.$set = req.body;
+  }
+
+  Product.updateOne({ _id: id }, updateOps)
+    .exec()
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
+});
 
 router.delete("/:productId", (req, res, next) => {
   const id = req.params.productId;
