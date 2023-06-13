@@ -6,6 +6,13 @@ function createRoutes(modelName, Model) {
   // Create a new instance of Express Router
   const router = express.Router();
 
+  // Create a different behavior depending on the model
+  // if (modelName === "orders") {
+  //   // Custom behavior for "order" model get endpoint
+  //   router.get("/", (req, res, next) => {
+  //     // Custom code here 
+  //   });
+  // } else { ... 👇🏻 the lines below
   router.get("/", (req, res, next) => {
     Model.find()
       .exec()
