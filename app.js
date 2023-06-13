@@ -4,8 +4,16 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const productRoutes = require("./api/routes/products");
-const orderRoutes = require("./api/routes/orders");
+// Default routes for express
+const createRoutes = require("./api/routes/routes");
+
+// Models Imports
+const Product = require("./api/models/product");
+const Order = require("./api/models/order");
+
+// Instance methods for models
+const productRouter = createRoutes("products", Product); // Create instance of product router
+const orderRouter = createRoutes("orders", Order); // Create instance of order router
 
 mongoose
   .connect(
@@ -47,8 +55,8 @@ app.use((req, res, next) => {
   next(); // Add this line to pass the control to the next middleware, else it will keep waiting and will stuck
 });
 
-app.use("/products", productRoutes);
-app.use("/orders", orderRoutes);
+app.use("/products", productRouter); // Register product routes
+app.use("/orders", orderRouter); // Register order routes
 
 // Error handlers
 app.use((req, res, next) => {
