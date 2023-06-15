@@ -6,7 +6,7 @@ const Order = require("../models/order");
 
 router.get("/", (req, res, next) => {
   Order.find()
-    .select("order _id product quantity")
+    .select("order _id product quantity timeStamp")
     .exec()
     .then((docs) => {
       const response = {
@@ -22,6 +22,7 @@ router.get("/", (req, res, next) => {
               description: "GET_PRODUCT_DETAILS",
               url: "http://localhost:3000/products/" + doc.product,
             },
+            timeStamp: doc.timeStamp,
             request: {
               type: "GET",
               description: "GET_ORDER_DETAILS",
@@ -57,7 +58,6 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-  const date = new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear() + ' ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
   const order = new Order({
     _id: new mongoose.Types.ObjectId(),
     quantity: req.body.quantity,
@@ -73,7 +73,7 @@ router.post("/", (req, res, next) => {
           orderId: result._id,
           product: result.product,
           quantity: result.quantity,
-          timeStamp: date
+          timeStamp: result.timeStamp
         },
         request: {
           type: "GET",
@@ -96,7 +96,7 @@ router.post("/", (req, res, next) => {
 router.get("/:orderId", (req, res, next) => {
   const id = req.params.orderId;
   Order.findById(id)
-    .select("_id product quantity")
+    .select("_id product quantity timeStamp")
     .exec()
     .then((doc) => {
       if (doc) {
@@ -134,7 +134,6 @@ router.patch("/:orderId", (req, res, next) => {
   Order.updateOne({ _id: id }, updateOps)
     .exec()
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
