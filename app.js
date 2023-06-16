@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
+const userRoutes = require("./api/routes/users");
 
 mongoose
   .connect(
@@ -44,13 +45,16 @@ app.use((req, res, next) => {
       "Access-Control-Allow-Methods",
       "PUT, POST, PATCH, DELETE, GET, OPTIONS"
     );
-    return res.status(200).json({});
+    return res.status(200).json({
+      message: "Se permiten las solicitudes posteriores desde el origen especificado"
+    });
   }
   next(); // Add this line to pass the control to the next middleware, else it will keep waiting and will stuck
 });
 
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
+app.use("/users", userRoutes);
 
 // Error handlers
 app.use((req, res, next) => {
