@@ -26,6 +26,8 @@ mongoose
 
 app.use(morgan("dev"));
 
+app.use('/uploads', express.static('uploads'));
+
 // Usar body-parser como middleware
 app.use(bodyParser.json()); // Para analizar datos JSON
 app.use(bodyParser.urlencoded({ extended: false })); // Para analizar datos de formulario

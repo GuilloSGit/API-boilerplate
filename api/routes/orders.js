@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 const Order = require("../models/order");
+const Product = require("../models/product");
 
 router.get("/", (req, res, next) => {
   Order.find()
@@ -52,7 +53,6 @@ router.get("/", (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
@@ -73,7 +73,7 @@ router.post("/", (req, res, next) => {
           orderId: result._id,
           product: result.product,
           quantity: result.quantity,
-          timeStamp: result.timeStamp
+          timeStamp: result.timeStamp,
         },
         request: {
           type: "GET",
@@ -87,8 +87,8 @@ router.post("/", (req, res, next) => {
         message: "Oh oh... something went wrong when trying to save the order",
         error: err._message,
         details: {
-          errorsDetection: err.errors
-        }
+          errorsDetection: err.errors,
+        },
       });
     });
 });
@@ -109,7 +109,14 @@ router.get("/:orderId", (req, res, next) => {
           },
         });
       } else {
-        res.status(404).json({ message: "Order not found" });
+        res.status(404).json({
+          message: "Order not found",
+          request: {
+            type: "GET",
+            description: "GET_ALL_ORDERS",
+            url: "http://localhost:3000/orders",
+          },
+        });
       }
     })
     .catch((err) => {
@@ -120,8 +127,6 @@ router.get("/:orderId", (req, res, next) => {
 router.patch("/:orderId", (req, res, next) => {
   const id = req.params.orderId;
   const updateOps = {};
-
-  // Check if req.body is iterable
   if (Array.isArray(req.body)) {
     for (const ops of req.body) {
       updateOps.$set = updateOps.$set || {};
@@ -137,7 +142,6 @@ router.patch("/:orderId", (req, res, next) => {
       res.status(200).json(result);
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
@@ -152,7 +156,6 @@ router.delete("/:orderId", (req, res, next) => {
       res.status(200).json(result);
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err.message });
     });
 });

@@ -1,12 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
 const Product = require("../models/product");
+
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().getDate() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getFullYear() + '-prod-' + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // reject a file
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
 
 router.get("/", (req, res, next) => {
   Product.find()
-    .select("productName price _id")
+    .select("productName price _id productImage")
     .exec()
     .then((docs) => {
       const response = {
@@ -16,6 +43,7 @@ router.get("/", (req, res, next) => {
             _id: doc._id,
             productName: doc.productName,
             price: doc.price,
+            productImage: doc.productImage,
             request: {
               type: "GET",
               url: "http://localhost:3000/products/" + doc._id,
@@ -26,7 +54,7 @@ router.get("/", (req, res, next) => {
       if (docs.length !== 0) {
         res.status(200).json({
           message: "Your have " + response.count + " different products",
-          response
+          response,
         });
       } else {
         res.status(200).json({
@@ -35,29 +63,30 @@ router.get("/", (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({
         error: err,
       });
     });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("productImage"), (req, res, next) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     productName: req.body.productName,
     price: req.body.price,
+    productImage: req.file.path,
   });
+
   product
     .save()
     .then((result) => {
-      console.log(result);
       res.status(201).json({
         message: "Successfully saved to /products",
         createdProduct: {
           _id: result._id,
           productName: result.productName,
           price: result.price,
+          productImageUrl: result.productImage,
           request: {
             type: "GET",
             url: "http://localhost:3000/products/" + result._id,
@@ -76,10 +105,9 @@ router.post("/", (req, res, next) => {
 router.get("/:productId", (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
-    .select("productName price _id")
+    .select("productName price _id productImage")
     .exec()
     .then((doc) => {
-      console.log("From database", doc);
       if (doc) {
         res.status(200).json({
           product: doc,
@@ -122,7 +150,6 @@ router.patch("/:productId", (req, res, next) => {
   Product.updateOne({ _id: id }, updateOps)
     .exec()
     .then((result) => {
-      console.log(result);
       res.status(200).json({
         message: "Product " + productName + " updated successfully",
         request: {
@@ -132,7 +159,6 @@ router.patch("/:productId", (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
@@ -145,20 +171,19 @@ router.delete("/:productId", (req, res, next) => {
     .exec()
     .then((result) => {
       res.status(200).json({
-        message: 'Product deleted successfully',
+        message: "Product deleted successfully",
         request: {
-          type: 'POST',
-          url: 'http://localhost:3000/products/',
+          type: "POST",
+          url: "http://localhost:3000/products/",
           description: "POST_NEW_PRODUCT",
           body: {
-            productName: 'String',
-            price: 'Number'
-          }
-        }
+            productName: "String",
+            price: "Number",
+          },
+        },
       });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ error: err.message });
     });
 });
