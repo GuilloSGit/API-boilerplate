@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Product = require("../models/product");
 
+const protocol = process.env.PROTOCOL || 'http';
+
 exports.products_get_all = (req, res, next) => {
   Product.find()
     .select("productName price _id productImage productImageUrl")
@@ -13,11 +15,10 @@ exports.products_get_all = (req, res, next) => {
             _id: doc._id,
             productName: doc.productName,
             price: doc.price,
-            productImageUrl:
-              "http://localhost:3000/" + doc.productImage.replace(/\\/g, "/"),
+            productImageUrl: `${req.protocol}://${req.get('host')}/${doc.productImage.replace(/\\/g, "/")}`,
             request: {
               type: "GET",
-              url: "http://localhost:3000/products/" + doc._id,
+              url: `${req.protocol}://${req.get('host')}/products/${doc._id}`,
             },
           };
         }),
@@ -49,8 +50,8 @@ exports.products_post_one = (req, res, next) => {
     productName: req.body.productName,
     price: req.body.price,
     productImage: req.file.path,
-    productImageUrl:
-      "http://localhost:3000/" + req.file.path.replace(/\\/g, "/"),
+    productImageUrl: `${req.protocol}://${req.get('host')}/${req.file.path.replace(/\\/g, "/")}`,
+
   });
 
   product
@@ -66,7 +67,7 @@ exports.products_post_one = (req, res, next) => {
           productImageUrl: result.productImageUrl,
           request: {
             type: "GET",
-            url: "http://localhost:3000/products/" + result._id,
+            url: `${req.protocol}://${req.get('host')}/products/${result._id}`,
           },
         },
       });
@@ -91,7 +92,7 @@ exports.products_get_one = (req, res, next) => {
           request: {
             type: "GET",
             description: "GET_ALL_PRODUCTS",
-            url: "http://localhost:3000/products",
+            url: `${req.protocol}://${req.get('host')}/products`,
           },
         });
       } else {
@@ -131,7 +132,7 @@ exports.products_patch = (req, res, next) => {
         message: "Product " + productName + " updated successfully",
         request: {
           type: "GET",
-          url: "http://localhost:3000/products/" + id,
+          url: `${req.protocol}://${req.get('host')}/products/${id}`
         },
       });
     })
@@ -151,7 +152,7 @@ exports.products_delete_product = (req, res, next) => {
         message: "Product deleted successfully",
         request: {
           type: "POST",
-          url: "http://localhost:3000/products/",
+          url: `${req.protocol}://${req.get('host')}/products/`,
           description: "POST_NEW_PRODUCT",
           body: {
             productName: "String",

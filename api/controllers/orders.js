@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Order = require("../models/order");
+const port = process.env.PORT || 3000;
 
 exports.orders_get_all = (req, res, next) => {
   Order.find()
@@ -17,13 +18,13 @@ exports.orders_get_all = (req, res, next) => {
             productRequest: {
               type: "GET",
               description: "GET_PRODUCT_DETAILS",
-              url: "http://localhost:3000/products/" + doc.product,
+              url: `${req.protocol}://${req.get('host')}/products/${doc.product}`,
             },
             timeStamp: doc.timeStamp,
             request: {
               type: "GET",
               description: "GET_ORDER_DETAILS",
-              url: "http://localhost:3000/orders/" + doc._id,
+              url: `${req.protocol}://${req.get('host')}/orders/${doc._id}`,
             },
           };
         }),
@@ -39,7 +40,7 @@ exports.orders_get_all = (req, res, next) => {
           request: {
             type: "POST",
             description: "POST_ORDER",
-            url: "http://localhost:3000/orders",
+            url: `${req.protocol}://${req.get('host')}/orders`,
             body: {
               productId: "String",
               quantity: "Number",
@@ -74,7 +75,7 @@ exports.orders_post_order = (req, res, next) => {
         request: {
           type: "GET",
           description: "GET_ORDER",
-          url: "http://localhost:3000/orders/" + result.id,
+          url: `${req.protocol}://${req.get('host')}/orders/${result.id}`,
         },
       });
     })
@@ -101,7 +102,7 @@ exports.orders_get_one_order = (req, res, next) => {
           request: {
             type: "GET",
             description: "GET_PRODUCT",
-            url: "http://localhost:3000/products/" + doc.product,
+            url: `${req.protocol}://${req.get('host')}/products/${doc.product}`,
           },
         });
       } else {
@@ -110,7 +111,7 @@ exports.orders_get_one_order = (req, res, next) => {
           request: {
             type: "GET",
             description: "GET_ALL_ORDERS",
-            url: "http://localhost:3000/orders",
+            url: `${req.protocol}://${req.get('host')}/orders`,
           },
         });
       }

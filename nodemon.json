@@ -1,6 +1,7 @@
 {
     "env": {
         "MONGOPASSWORD": "APIadministrator",
-        "JWT_KEY": "Administrador 10"
+        "JWT_KEY": "Administrador 10",
+        "PROTOCOL": "http"
     }
 }
