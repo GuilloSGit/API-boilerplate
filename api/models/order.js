@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   quantity: { type: Number, default: 1 },
-  timeStamp: { type: Date, default: new Date() }
+  timeStamp: { type: Date, default: new Date() },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

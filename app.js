@@ -27,7 +27,7 @@ mongoose
 
 app.use(morgan("dev"));
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 
 // Usar body-parser como middleware
 app.use(bodyParser.json()); // Para analizar datos JSON
@@ -46,7 +46,8 @@ app.use((req, res, next) => {
       "PUT, POST, PATCH, DELETE, GET, OPTIONS"
     );
     return res.status(200).json({
-      message: "Se permiten las solicitudes posteriores desde el origen especificado"
+      message:
+        "Se permiten las solicitudes posteriores desde el origen especificado",
     });
   }
   next(); // Add this line to pass the control to the next middleware, else it will keep waiting and will stuck

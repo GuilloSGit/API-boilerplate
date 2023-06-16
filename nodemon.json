@@ -1,5 +1,6 @@
 {
     "env": {
-        "MONGOPASSWORD": "APIadministrator"
+        "MONGOPASSWORD": "APIadministrator",
+        "JWT_KEY": "Administrador 10"
     }
 }
