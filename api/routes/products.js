@@ -19,7 +19,7 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
     cb(null, true);
   } else {
-    cb(null, false);
+    cb(new Error("Upload failed"), false);
   }
 };
 
@@ -33,7 +33,7 @@ const upload = multer({
 
 router.get("/", (req, res, next) => {
   Product.find()
-    .select("productName price _id productImage")
+    .select("productName price _id productImage productImageUrl")
     .exec()
     .then((docs) => {
       const response = {
@@ -43,7 +43,7 @@ router.get("/", (req, res, next) => {
             _id: doc._id,
             productName: doc.productName,
             price: doc.price,
-            productImage: doc.productImage,
+            productImageUrl: 'http://localhost:3000/' + (doc.productImage).replace(/\\/g, "/"),
             request: {
               type: "GET",
               url: "http://localhost:3000/products/" + doc._id,
@@ -53,7 +53,7 @@ router.get("/", (req, res, next) => {
       };
       if (docs.length !== 0) {
         res.status(200).json({
-          message: "Your have " + response.count + " different products",
+          message: docs.length === 1 ? "You have 1 product on database" : "Your have " + response.count + " different products",
           response,
         });
       } else {
@@ -75,6 +75,7 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
     productName: req.body.productName,
     price: req.body.price,
     productImage: req.file.path,
+    productImageUrl: 'http://localhost:3000/' + (req.file.path).replace(/\\/g, "/"),
   });
 
   product
@@ -86,7 +87,8 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
           _id: result._id,
           productName: result.productName,
           price: result.price,
-          productImageUrl: result.productImage,
+          productImage: result.productImage,
+          productImageUrl: result.productImageUrl,
           request: {
             type: "GET",
             url: "http://localhost:3000/products/" + result._id,
@@ -105,7 +107,7 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
 router.get("/:productId", (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
-    .select("productName price _id productImage")
+    .select("productName price _id productImageUrl")
     .exec()
     .then((doc) => {
       if (doc) {
