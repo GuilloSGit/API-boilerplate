@@ -30,9 +30,9 @@ app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 
 // Usar body-parser como middleware
-app.use(bodyParser.json()); // Para analizar datos JSON
-app.use(bodyParser.urlencoded({ extended: false })); // Para analizar datos de formulario
-app.use(bodyParser.json()); // Para analizar datos JSON
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");

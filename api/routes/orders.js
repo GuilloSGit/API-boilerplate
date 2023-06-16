@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const checkAuth = require('../middleware/check-auth')
 
 const Order = require("../models/order");
 const Product = require("../models/product");
 
-router.get("/", (req, res, next) => {
+router.get("/", checkAuth, (req, res, next) => {
   Order.find()
     .select("order _id product quantity timeStamp")
     .exec()
@@ -57,7 +58,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", checkAuth, (req, res, next) => {
   const order = new Order({
     _id: new mongoose.Types.ObjectId(),
     quantity: req.body.quantity,
@@ -93,7 +94,7 @@ router.post("/", (req, res, next) => {
     });
 });
 
-router.get("/:orderId", (req, res, next) => {
+router.get("/:orderId", checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   Order.findById(id)
     .select("_id product quantity timeStamp")
@@ -124,7 +125,7 @@ router.get("/:orderId", (req, res, next) => {
     });
 });
 
-router.patch("/:orderId", (req, res, next) => {
+router.patch("/:orderId", checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   const updateOps = {};
   if (Array.isArray(req.body)) {
@@ -146,7 +147,7 @@ router.patch("/:orderId", (req, res, next) => {
     });
 });
 
-router.delete("/:orderId", (req, res, next) => {
+router.delete("/:orderId", checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   Order.deleteOne({
     _id: id,
