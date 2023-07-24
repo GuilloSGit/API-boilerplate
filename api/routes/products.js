@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
         "-" +
         new Date().getFullYear() +
         "-prod-" +
-        file.originalname
+        file.originalname,
     );
   },
 });
@@ -47,14 +47,14 @@ router.post(
   "/",
   checkAuth,
   upload.single("productImage"),
-  ProductsController.products_post_one
+  ProductsController.products_post_one,
 );
 router.get("/:productId", ProductsController.products_get_one);
 router.patch("/:productId", checkAuth, ProductsController.products_patch);
 router.delete(
   "/:productId",
   checkAuth,
-  ProductsController.products_delete_product
+  ProductsController.products_delete_product,
 );
 
 module.exports = router;

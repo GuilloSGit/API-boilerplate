@@ -18,13 +18,15 @@ exports.orders_get_all = (req, res, next) => {
             productRequest: {
               type: "GET",
               description: "GET_PRODUCT_DETAILS",
-              url: `${req.protocol}://${req.get('host')}/products/${doc.product}`,
+              url: `${req.protocol}://${req.get("host")}/products/${
+                doc.product
+              }`,
             },
             timeStamp: doc.timeStamp,
             request: {
               type: "GET",
               description: "GET_ORDER_DETAILS",
-              url: `${req.protocol}://${req.get('host')}/orders/${doc._id}`,
+              url: `${req.protocol}://${req.get("host")}/orders/${doc._id}`,
             },
           };
         }),
@@ -40,7 +42,7 @@ exports.orders_get_all = (req, res, next) => {
           request: {
             type: "POST",
             description: "POST_ORDER",
-            url: `${req.protocol}://${req.get('host')}/orders`,
+            url: `${req.protocol}://${req.get("host")}/orders`,
             body: {
               productId: "String",
               quantity: "Number",
@@ -75,7 +77,7 @@ exports.orders_post_order = (req, res, next) => {
         request: {
           type: "GET",
           description: "GET_ORDER",
-          url: `${req.protocol}://${req.get('host')}/orders/${result.id}`,
+          url: `${req.protocol}://${req.get("host")}/orders/${result.id}`,
         },
       });
     })
@@ -102,7 +104,7 @@ exports.orders_get_one_order = (req, res, next) => {
           request: {
             type: "GET",
             description: "GET_PRODUCT",
-            url: `${req.protocol}://${req.get('host')}/products/${doc.product}`,
+            url: `${req.protocol}://${req.get("host")}/products/${doc.product}`,
           },
         });
       } else {
@@ -111,7 +113,7 @@ exports.orders_get_one_order = (req, res, next) => {
           request: {
             type: "GET",
             description: "GET_ALL_ORDERS",
-            url: `${req.protocol}://${req.get('host')}/orders`,
+            url: `${req.protocol}://${req.get("host")}/orders`,
           },
         });
       }
