@@ -16,7 +16,7 @@ mongoose
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    }
+    },
   )
   .then(() => {
     console.log("Connected to MongoDB");
@@ -38,12 +38,12 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
   );
   if (req.method === "OPTIONS") {
     req.header(
       "Access-Control-Allow-Methods",
-      "PUT, POST, PATCH, DELETE, GET, OPTIONS"
+      "PUT, POST, PATCH, DELETE, GET, OPTIONS",
     );
     return res.status(200).json({
       message:
